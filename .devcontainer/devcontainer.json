@@ -1,0 +1,35 @@
+{
+  "name": "emita.me",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspaces/emita.me",
+
+  "forwardPorts": [3000, 5432, 6379],
+  "portsAttributes": {
+    "3000": { "label": "Rails API", "onAutoForward": "notify" },
+    "5432": { "label": "PostgreSQL", "onAutoForward": "silent" },
+    "6379": { "label": "Redis", "onAutoForward": "silent" }
+  },
+
+  "postCreateCommand": "bundle install && bundle exec rails db:prepare",
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "shopify.ruby-lsp",
+        "misogi.ruby-rubocop",
+        "eamodio.gitlens",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "[ruby]": {
+          "editor.defaultFormatter": "shopify.ruby-lsp"
+        },
+        "rubyLsp.formatter": "rubocop"
+      }
+    }
+  },
+
+  "remoteUser": "root"
+}
