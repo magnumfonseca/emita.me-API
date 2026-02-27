@@ -1,0 +1,24 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://sso.acesso.gov.br/token
+    body:
+      encoding: UTF-8
+      string: grant_type=authorization_code&code=auth_code&redirect_uri=http%3A%2F%2Flocalhost%2Fcallback&client_id=test_client_id&client_secret=test_client_secret
+    headers:
+      Content-Type:
+      - application/x-www-form-urlencoded
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+    body:
+      encoding: UTF-8
+      string: '{"access_token":"ACCESS_TOKEN_EXEMPLO","id_token":"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5ODc2NTQzMjEwMCIsIm5hbWUiOiJNYXJpYSBCcm9uemUiLCJlbWFpbCI6Im1hcmlhQGV4YW1wbGUuY29tIiwiY29uZmlhYmlsaWRhZGUiOnsibml2ZWwiOiJicm9uemUifX0.signature","token_type":"Bearer","expires_in":3600,"scope":"openid
+        email profile govbr_confiabilidades govbr_confiabilidades_idtoken"}'
+  recorded_at: Thu, 26 Feb 2026 00:00:00 GMT
+recorded_with: VCR 6.2.0

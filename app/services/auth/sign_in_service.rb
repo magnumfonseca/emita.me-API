@@ -1,0 +1,40 @@
+# frozen_string_literal: true
+
+module Auth
+  class SignInService
+    def initialize(code:, gateway: GovBr::OauthGateway.new)
+      @code    = code
+      @gateway = gateway
+    end
+
+    def call
+      oauth_response = @gateway.fetch_token(code: @code)
+      return Result.failure("insufficient_trust_level") unless oauth_response.valid?
+
+      user = find_or_create_user(oauth_response)
+      Result.success(user)
+    rescue Errors::GatewayError
+      Result.failure("gateway_error")
+    rescue Errors::InvalidToken
+      Result.failure("invalid_token")
+    end
+
+    private
+
+    def find_or_create_user(oauth_response)
+      user = find_or_create_by_cpf(oauth_response)
+      user.update!(trust_level: oauth_response.trust_level) unless user.previously_new_record?
+      user
+    end
+
+    def find_or_create_by_cpf(oauth_response)
+      User.find_or_create_by!(cpf: oauth_response.cpf) do |u|
+        u.name        = oauth_response.name
+        u.email       = oauth_response.email
+        u.trust_level = oauth_response.trust_level
+      end
+    rescue ActiveRecord::RecordNotUnique
+      User.find_by!(cpf: oauth_response.cpf)
+    end
+  end
+end
