@@ -31,7 +31,7 @@ RSpec.describe 'Auth::Sessions', type: :request do
                          name:        { type: :string },
                          email:       { type: :string },
                          cpf:         { type: :string },
-                         trust_level: { type: :integer }
+                         trust_level: { type: :string }
                        }
                      }
                    }

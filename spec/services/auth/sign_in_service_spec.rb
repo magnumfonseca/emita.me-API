@@ -47,6 +47,11 @@ RSpec.describe Auth::SignInService do
         expect(result.data.trust_level).to eq("prata")
       end
 
+      it "does not issue a redundant UPDATE when creating a new user" do
+        expect_any_instance_of(User).not_to receive(:update!)
+        service.call
+      end
+
       it "updates trust_level on re-authentication" do
         existing = create(:user, cpf: "12345678900", trust_level: :prata)
         allow(gateway).to receive(:fetch_token).and_return(

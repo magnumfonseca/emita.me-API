@@ -22,11 +22,13 @@ module Auth
     private
 
     def find_or_create_user(oauth_response)
-      User.find_or_create_by!(cpf: oauth_response.cpf) do |u|
+      user = User.find_or_create_by!(cpf: oauth_response.cpf) do |u|
         u.name        = oauth_response.name
         u.email       = oauth_response.email
         u.trust_level = oauth_response.trust_level
-      end.tap { |u| u.update!(trust_level: oauth_response.trust_level) }
+      end
+      user.update!(trust_level: oauth_response.trust_level) unless user.previously_new_record?
+      user
     end
   end
 end
