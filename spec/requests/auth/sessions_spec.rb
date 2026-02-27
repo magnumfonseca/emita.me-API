@@ -28,9 +28,10 @@ RSpec.describe 'Auth::Sessions', type: :request do
                      attributes: {
                        type: :object,
                        properties: {
-                         name:  { type: :string },
-                         email: { type: :string },
-                         cpf:   { type: :string }
+                         name:        { type: :string },
+                         email:       { type: :string },
+                         cpf:         { type: :string },
+                         trust_level: { type: :integer }
                        }
                      }
                    }
