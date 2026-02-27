@@ -19,7 +19,7 @@ module Auth
     end
 
     def render_failure(error)
-      render json: { error: error }, status: ERROR_STATUS_MAP[error]
+      render json: { error: error }, status: ERROR_STATUS_MAP.fetch(error, :internal_server_error)
     end
   end
 end
