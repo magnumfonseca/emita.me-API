@@ -61,6 +61,25 @@ RSpec.describe OauthResponse do
     end
   end
 
+  describe "with a malformed id_token" do
+    it "raises Errors::InvalidToken when token is nil" do
+      expect { described_class.new(id_token: nil) }.to raise_error(Errors::InvalidToken)
+    end
+
+    it "raises Errors::InvalidToken when token has wrong number of parts" do
+      expect { described_class.new(id_token: "only.two") }.to raise_error(Errors::InvalidToken)
+    end
+
+    it "raises Errors::InvalidToken when payload segment is not valid base64" do
+      expect { described_class.new(id_token: "header.!!!invalid!!!.signature") }.to raise_error(Errors::InvalidToken)
+    end
+
+    it "raises Errors::InvalidToken when decoded payload is not valid JSON" do
+      invalid_json = Base64.urlsafe_encode64("not-valid-json", padding: false)
+      expect { described_class.new(id_token: "header.#{invalid_json}.signature") }.to raise_error(Errors::InvalidToken)
+    end
+  end
+
   describe "#valid?" do
     it "returns true when trust level is prata" do
       expect(described_class.new(id_token: prata_token)).to be_valid

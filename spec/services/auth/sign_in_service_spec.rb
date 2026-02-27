@@ -86,5 +86,17 @@ RSpec.describe Auth::SignInService do
         expect(service.call.error).to eq("gateway_error")
       end
     end
+
+    context "when the id_token is malformed" do
+      before { allow(gateway).to receive(:fetch_token).and_raise(Errors::InvalidToken) }
+
+      it "returns Result.failure" do
+        expect(service.call).to be_failure
+      end
+
+      it "sets error to invalid_token" do
+        expect(service.call.error).to eq("invalid_token")
+      end
+    end
   end
 end

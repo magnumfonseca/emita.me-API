@@ -15,6 +15,8 @@ module Auth
       Result.success(user)
     rescue Errors::GatewayError
       Result.failure("gateway_error")
+    rescue Errors::InvalidToken
+      Result.failure("invalid_token")
     end
 
     private
