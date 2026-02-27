@@ -27,7 +27,7 @@ This document provides context for the Claude Code assistant. Keep this file con
 *   We use a service object pattern for complex business logic.
 *   We avoid placing excessive logic in controllers or models (fat model, skinny controller is **discouraged**).
 *   We use Sandi Metz' rules for developers. Refer to [`./docs/SANDI_METZ_RULES.md`](./docs/SANDI_METZ_RULES.md) for details.
-*   We use Clean-Architecure/Onion-Architetucre. Refer to [`./docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) for details.
+*   We use Clean-Architecture/Onion-Architecture. Refer to [`./docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) for details.
 
 ### Use Rails Doctrine (Convention) when:
 * Simple CRUD operations (1-3 lines)
