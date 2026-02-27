@@ -64,6 +64,37 @@ RSpec.describe Auth::SignInService do
       end
     end
 
+    context "when a concurrent request creates the user first (race condition)" do
+      before { allow(gateway).to receive(:fetch_token).and_return(prata_oauth) }
+
+      it "returns Result.success with the existing user" do
+        existing = create(:user, cpf: "12345678900")
+        allow(User).to receive(:find_or_create_by!).and_raise(ActiveRecord::RecordNotUnique)
+
+        expect(service.call.data).to eq(existing)
+      end
+
+      it "does not create a duplicate user" do
+        create(:user, cpf: "12345678900")
+        allow(User).to receive(:find_or_create_by!).and_raise(ActiveRecord::RecordNotUnique)
+
+        expect { service.call }.not_to change(User, :count)
+      end
+
+      it "updates trust_level on the concurrently created user" do
+        existing = create(:user, cpf: "12345678900", trust_level: :prata)
+        allow(User).to receive(:find_or_create_by!).and_raise(ActiveRecord::RecordNotUnique)
+        allow(gateway).to receive(:fetch_token).and_return(
+          instance_double(OauthResponse,
+            valid?: true, cpf: "12345678900",
+            name: "Joao da Silva", email: "joao@example.com",
+            trust_level: "ouro")
+        )
+
+        expect { service.call }.to change { existing.reload.trust_level }.from("prata").to("ouro")
+      end
+    end
+
     context "when trust level is bronze" do
       before { allow(gateway).to receive(:fetch_token).and_return(bronze_oauth) }
 

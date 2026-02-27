@@ -34,6 +34,8 @@ paths:
                             type: string
                           cpf:
                             type: string
+                          trust_level:
+                            type: string
         '403':
           description: insufficient trust level (bronze user)
           content:
@@ -54,6 +56,26 @@ paths:
                   error:
                     type: string
                     example: gateway_error
+        '401':
+          description: invalid or malformed token returned by Gov.br
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: invalid_token
+        '422':
+          description: missing code parameter
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: missing_code
       requestBody:
         content:
           application/json:

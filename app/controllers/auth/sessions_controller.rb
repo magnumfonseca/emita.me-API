@@ -4,8 +4,12 @@ module Auth
   class SessionsController < ApplicationController
     ERROR_STATUS_MAP = {
       "insufficient_trust_level" => :forbidden,
-      "gateway_error"            => :service_unavailable
+      "gateway_error"            => :service_unavailable,
+      "invalid_token"            => :unauthorized,
+      "missing_code"             => :unprocessable_entity
     }.freeze
+
+    before_action :require_code_param, only: :create
 
     def create
       result = Auth::SignInService.new(code: params[:code]).call
@@ -13,6 +17,10 @@ module Auth
     end
 
     private
+
+    def require_code_param
+      render_failure("missing_code") if params[:code].blank?
+    end
 
     def render_success(user)
       render json: UserSerializer.new(user).serializable_hash, status: :created

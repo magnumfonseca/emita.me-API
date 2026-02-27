@@ -19,7 +19,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_02_26_000001) do
     t.datetime "created_at", null: false
     t.string "email"
     t.string "name"
-    t.string "trust_level", default: "prata", null: false
+    t.string "trust_level", null: false
     t.datetime "updated_at", null: false
     t.index ["cpf"], name: "index_users_on_cpf", unique: true
   end

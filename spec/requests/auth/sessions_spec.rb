@@ -83,6 +83,34 @@ RSpec.describe 'Auth::Sessions', type: :request do
 
         run_test!
       end
+
+      response '401', 'invalid or malformed token returned by Gov.br' do
+        schema type: :object,
+               properties: {
+                 error: { type: :string, example: 'invalid_token' }
+               }
+
+        let(:body) { { code: 'malformed_code' } }
+
+        before do
+          allow_any_instance_of(Auth::SignInService)
+            .to receive(:call)
+            .and_return(Result.failure("invalid_token"))
+        end
+
+        run_test!
+      end
+
+      response '422', 'missing code parameter' do
+        schema type: :object,
+               properties: {
+                 error: { type: :string, example: 'missing_code' }
+               }
+
+        let(:body) { {} }
+
+        run_test!
+      end
     end
   end
 end

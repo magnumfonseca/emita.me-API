@@ -30,17 +30,9 @@ class OauthResponse
   private
 
   def decode_payload(id_token)
-    encoded = payload_segment(id_token)
-    padded  = encoded + "=" * ((4 - encoded.length % 4) % 4)
-    JSON.parse(Base64.urlsafe_decode64(padded))
-  rescue ArgumentError, JSON::ParserError
+    payload, _header = JWT.decode(id_token, nil, false)
+    payload
+  rescue JWT::DecodeError
     raise Errors::InvalidToken
-  end
-
-  def payload_segment(id_token)
-    parts = id_token&.split(".")
-    raise Errors::InvalidToken unless parts&.length == 3
-
-    parts[1]
   end
 end

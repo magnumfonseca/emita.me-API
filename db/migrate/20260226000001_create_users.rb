@@ -6,7 +6,7 @@ class CreateUsers < ActiveRecord::Migration[8.1]
       t.string  :cpf,         null: false
       t.string  :name
       t.string  :email
-      t.string :trust_level, null: false, default: "prata"
+      t.string :trust_level, null: false
 
       t.timestamps
     end
