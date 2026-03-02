@@ -9,5 +9,11 @@ Rails.application.routes.draw do
     post "callback", to: "sessions#create"
   end
 
+  namespace :api do
+    namespace :v1 do
+      resources :contacts, only: %i[index show create update destroy]
+    end
+  end
+
   get "up" => "rails/health#show", as: :rails_health_check
 end

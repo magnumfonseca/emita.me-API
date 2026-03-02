@@ -3,6 +3,10 @@
 class Contact < ApplicationRecord
   belongs_to :user
 
+  scope :by_name, ->(name) { where("name ILIKE ?", "%#{sanitize_sql_like(name)}%") if name.present? }
+  scope :by_cpf,  ->(cpf)  { where(cpf: cpf.gsub(/\D/, "")) if cpf.present? }
+  scope :by_cnpj, ->(cnpj) { where(cnpj: cnpj.gsub(/\D/, "")) if cnpj.present? }
+
   before_validation :normalize_fields
 
   validates :name,    presence: true

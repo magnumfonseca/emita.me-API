@@ -23,7 +23,13 @@ module Auth
     end
 
     def render_success(user)
-      render json: UserSerializer.new(user).serializable_hash, status: :created
+      token = JWT.encode({ user_id: user.id }, ENV.fetch("JWT_SECRET"), "HS256")
+      render json: {
+        success: true,
+        data: UserSerializer.new(user).serializable_hash[:data],
+        token: token,
+        message: "Authenticated successfully"
+      }, status: :created
     end
 
     def render_failure(error)
