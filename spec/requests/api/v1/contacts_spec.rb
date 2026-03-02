@@ -4,10 +4,7 @@ require "swagger_helper"
 
 RSpec.describe "Api::V1::Contacts", type: :request do
   let(:user) { create(:user) }
-  let(:token) do
-    now = Time.current.to_i
-    JWT.encode({ user_id: user.id, iat: now, exp: now + 24.hours.to_i }, ENV.fetch("JWT_SECRET"), "HS256")
-  end
+  let(:token) { JwtEncoder.encode(user.id) }
 
   path "/api/v1/contacts" do
     get "List contacts for the current user" do

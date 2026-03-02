@@ -56,7 +56,16 @@ RSpec.describe 'Auth::Sessions', type: :request do
       response '403', 'insufficient trust level (bronze user)' do
         schema type: :object,
                properties: {
-                 error: { type: :string, example: 'insufficient_trust_level' }
+                 success: { type: :boolean, example: false },
+                 data:    { type: :object, nullable: true },
+                 error: {
+                   type: :object,
+                   properties: {
+                     code:    { type: :string, example: ErrorCodes::INSUFFICIENT_TRUST_LEVEL },
+                     message: { type: :string },
+                     details: { type: :array, items: { type: :string } }
+                   }
+                 }
                }
 
         let(:body) { { code: 'bronze_code' } }
@@ -67,13 +76,26 @@ RSpec.describe 'Auth::Sessions', type: :request do
             .and_return(Result.failure("insufficient_trust_level"))
         end
 
-        run_test!
+        run_test! do |response|
+          parsed = JSON.parse(response.body)
+          expect(parsed["success"]).to be false
+          expect(parsed["error"]["code"]).to eq(ErrorCodes::INSUFFICIENT_TRUST_LEVEL)
+        end
       end
 
       response '503', 'Gov.br unavailable' do
         schema type: :object,
                properties: {
-                 error: { type: :string, example: 'gateway_error' }
+                 success: { type: :boolean, example: false },
+                 data:    { type: :object, nullable: true },
+                 error: {
+                   type: :object,
+                   properties: {
+                     code:    { type: :string, example: ErrorCodes::GATEWAY_ERROR },
+                     message: { type: :string },
+                     details: { type: :array, items: { type: :string } }
+                   }
+                 }
                }
 
         let(:body) { { code: 'any_code' } }
@@ -84,13 +106,26 @@ RSpec.describe 'Auth::Sessions', type: :request do
             .and_return(Result.failure("gateway_error"))
         end
 
-        run_test!
+        run_test! do |response|
+          parsed = JSON.parse(response.body)
+          expect(parsed["success"]).to be false
+          expect(parsed["error"]["code"]).to eq(ErrorCodes::GATEWAY_ERROR)
+        end
       end
 
       response '401', 'invalid or malformed token returned by Gov.br' do
         schema type: :object,
                properties: {
-                 error: { type: :string, example: 'invalid_token' }
+                 success: { type: :boolean, example: false },
+                 data:    { type: :object, nullable: true },
+                 error: {
+                   type: :object,
+                   properties: {
+                     code:    { type: :string, example: ErrorCodes::INVALID_TOKEN },
+                     message: { type: :string },
+                     details: { type: :array, items: { type: :string } }
+                   }
+                 }
                }
 
         let(:body) { { code: 'malformed_code' } }
@@ -101,18 +136,35 @@ RSpec.describe 'Auth::Sessions', type: :request do
             .and_return(Result.failure("invalid_token"))
         end
 
-        run_test!
+        run_test! do |response|
+          parsed = JSON.parse(response.body)
+          expect(parsed["success"]).to be false
+          expect(parsed["error"]["code"]).to eq(ErrorCodes::INVALID_TOKEN)
+        end
       end
 
       response '422', 'missing code parameter' do
         schema type: :object,
                properties: {
-                 error: { type: :string, example: 'missing_code' }
+                 success: { type: :boolean, example: false },
+                 data:    { type: :object, nullable: true },
+                 error: {
+                   type: :object,
+                   properties: {
+                     code:    { type: :string, example: ErrorCodes::MISSING_CODE },
+                     message: { type: :string },
+                     details: { type: :array, items: { type: :string } }
+                   }
+                 }
                }
 
         let(:body) { {} }
 
-        run_test!
+        run_test! do |response|
+          parsed = JSON.parse(response.body)
+          expect(parsed["success"]).to be false
+          expect(parsed["error"]["code"]).to eq(ErrorCodes::MISSING_CODE)
+        end
       end
     end
   end

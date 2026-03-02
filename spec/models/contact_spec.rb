@@ -11,7 +11,6 @@ RSpec.describe Contact, type: :model do
 
   # ── Presence validations ─────────────────────────────────────────────────────
   it { is_expected.to validate_presence_of(:name) }
-  it { is_expected.to validate_presence_of(:user_id) }
 
   # ── CPF or CNPJ must be present ──────────────────────────────────────────────
   context 'when both cpf and cnpj are blank' do

@@ -77,7 +77,7 @@ module Api
         render json: {
           success: false,
           data: nil,
-          error: { code: "NOT_FOUND", message: "Contact not found", details: [] }
+          error: { code: ErrorCodes::NOT_FOUND, message: "Contact not found", details: [] }
         }, status: :not_found
       end
 
@@ -86,7 +86,7 @@ module Api
           success: false,
           data: nil,
           error: {
-            code: "VALIDATION_ERROR",
+            code: ErrorCodes::VALIDATION_ERROR,
             message: contact.errors.full_messages.first,
             details: contact.errors.full_messages
           }
