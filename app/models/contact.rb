@@ -10,7 +10,7 @@ class Contact < ApplicationRecord
   validates :cpf,     cpf:  true, allow_blank: true
   validates :cnpj,    cnpj: true, allow_blank: true
   validates :email,   format: { with: URI::MailTo::EMAIL_REGEXP }, allow_blank: true
-  validates :phone,   format: { with: /\A\d{2}9\d{8}\z/, message: 'deve conter DDD + 9 + 8 dígitos' },
+  validates :phone,   format: { with: /\A\d{2}9\d{8}\z/, message: "deve conter DDD + 9 + 8 dígitos" },
                       allow_blank: true
 
   validate :cpf_or_cnpj_present
@@ -25,14 +25,14 @@ class Contact < ApplicationRecord
   end
 
   def strip_non_digits(value)
-    value&.gsub(/\D/, '')
+    value&.gsub(/\D/, "")
   end
 
   def cpf_or_cnpj_present
-    errors.add(:base, 'CPF ou CNPJ deve ser informado') unless cpf.present? || cnpj.present?
+    errors.add(:base, "CPF ou CNPJ deve ser informado") unless cpf.present? || cnpj.present?
   end
 
   def phone_or_email_present
-    errors.add(:base, 'Telefone ou e-mail deve ser informado') unless phone.present? || email.present?
+    errors.add(:base, "Telefone ou e-mail deve ser informado") unless phone.present? || email.present?
   end
 end

@@ -5,13 +5,13 @@ class CpfValidator < ActiveModel::EachValidator
     return if value.blank?
     return if valid_cpf?(value)
 
-    record.errors.add(attribute, :invalid, message: options[:message] || 'não é um CPF válido')
+    record.errors.add(attribute, :invalid, message: options[:message] || "não é um CPF válido")
   end
 
   private
 
   def valid_cpf?(cpf)
-    digits = cpf.to_s.gsub(/\D/, '')
+    digits = cpf.to_s.gsub(/\D/, "")
     return false unless digits.length == 11
     return false if digits.chars.uniq.length == 1
 

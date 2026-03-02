@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
 class CnpjValidator < ActiveModel::EachValidator
-  FIRST_WEIGHTS  = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2].freeze
-  SECOND_WEIGHTS = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2].freeze
+  FIRST_WEIGHTS  = [ 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 ].freeze
+  SECOND_WEIGHTS = [ 6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2 ].freeze
 
   def validate_each(record, attribute, value)
     return if value.blank?
     return if valid_cnpj?(value)
 
-    record.errors.add(attribute, :invalid, message: options[:message] || 'não é um CNPJ válido')
+    record.errors.add(attribute, :invalid, message: options[:message] || "não é um CNPJ válido")
   end
 
   private
 
   def valid_cnpj?(cnpj)
-    digits = cnpj.to_s.gsub(/\D/, '')
+    digits = cnpj.to_s.gsub(/\D/, "")
     return false unless digits.length == 14
     return false if digits.chars.uniq.length == 1
 
