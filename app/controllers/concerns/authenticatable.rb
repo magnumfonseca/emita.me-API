@@ -21,17 +21,15 @@ module Authenticatable
     token = request.headers["Authorization"]&.split(" ")&.last
     return unless token
 
-    payload = JWT.decode(token, ENV.fetch("JWT_SECRET"), true, algorithm: "HS256").first
-    User.find_by(id: payload["user_id"])
-  rescue JWT::DecodeError
-    nil
+    payload = JwtEncoder.decode(token)
+    User.find_by(id: payload["user_id"]) if payload
   end
 
   def render_unauthorized
     render json: {
       success: false,
       data: nil,
-      error: { code: "UNAUTHORIZED", message: "Unauthorized", details: [] }
+      error: { code: ErrorCodes::UNAUTHORIZED, message: "Unauthorized", details: [] }
     }, status: :unauthorized
   end
 end

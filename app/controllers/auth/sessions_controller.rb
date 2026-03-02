@@ -2,11 +2,11 @@
 
 module Auth
   class SessionsController < ApplicationController
-    ERROR_STATUS_MAP = {
-      "insufficient_trust_level" => :forbidden,
-      "gateway_error"            => :service_unavailable,
-      "invalid_token"            => :unauthorized,
-      "missing_code"             => :unprocessable_entity
+    ERROR_MAP = {
+      "insufficient_trust_level" => { code: ErrorCodes::INSUFFICIENT_TRUST_LEVEL, status: :forbidden,            message: "Insufficient trust level" },
+      "gateway_error"            => { code: ErrorCodes::GATEWAY_ERROR,            status: :service_unavailable,  message: "External service unavailable" },
+      "invalid_token"            => { code: ErrorCodes::INVALID_TOKEN,            status: :unauthorized,          message: "Invalid or malformed token" },
+      "missing_code"             => { code: ErrorCodes::MISSING_CODE,             status: :unprocessable_entity,  message: "Authorization code is required" }
     }.freeze
 
     before_action :require_code_param, only: :create
@@ -22,25 +22,22 @@ module Auth
       render_failure("missing_code") if params[:code].blank?
     end
 
-    TOKEN_EXPIRY = 24.hours
-
     def render_success(user)
-      token = JWT.encode(jwt_payload(user), ENV.fetch("JWT_SECRET"), "HS256")
       render json: {
         success: true,
         data: UserSerializer.new(user).serializable_hash[:data],
-        token: token,
+        token: JwtEncoder.encode(user.id),
         message: "Authenticated successfully"
       }, status: :created
     end
 
-    def jwt_payload(user)
-      now = Time.current.to_i
-      { user_id: user.id, iat: now, exp: now + TOKEN_EXPIRY.to_i }
-    end
-
-    def render_failure(error)
-      render json: { error: error }, status: ERROR_STATUS_MAP.fetch(error, :internal_server_error)
+    def render_failure(error_key)
+      mapping = ERROR_MAP.fetch(error_key, { code: ErrorCodes::INTERNAL_SERVER_ERROR, status: :internal_server_error, message: "An unexpected error occurred" })
+      render json: {
+        success: false,
+        data: nil,
+        error: { code: mapping[:code], message: mapping[:message], details: [] }
+      }, status: mapping[:status]
     end
   end
 end

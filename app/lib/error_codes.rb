@@ -1,0 +1,12 @@
+# frozen_string_literal: true
+
+module ErrorCodes
+  UNAUTHORIZED             = "UNAUTHORIZED"
+  NOT_FOUND                = "NOT_FOUND"
+  VALIDATION_ERROR         = "VALIDATION_ERROR"
+  INSUFFICIENT_TRUST_LEVEL = "INSUFFICIENT_TRUST_LEVEL"
+  GATEWAY_ERROR            = "GATEWAY_ERROR"
+  INVALID_TOKEN            = "INVALID_TOKEN"
+  MISSING_CODE             = "MISSING_CODE"
+  INTERNAL_SERVER_ERROR    = "INTERNAL_SERVER_ERROR"
+end
