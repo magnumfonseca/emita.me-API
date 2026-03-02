@@ -1,0 +1,7 @@
+# frozen_string_literal: true
+
+class ContactSerializer
+  include JSONAPI::Serializer
+
+  attributes :name, :email, :cpf, :cnpj, :phone
+end
