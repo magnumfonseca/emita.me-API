@@ -21,17 +21,10 @@ module Authenticatable
     token = request.headers["Authorization"]&.split(" ")&.last
     return unless token
 
-    secret = jwt_secret
-    return unless secret.present?
-
-    payload = JWT.decode(token, secret, true, algorithm: "HS256").first
+    payload = JWT.decode(token, ENV.fetch("JWT_SECRET"), true, algorithm: "HS256").first
     User.find_by(id: payload["user_id"])
   rescue JWT::DecodeError
     nil
-  end
-
-  def jwt_secret
-    ENV["JWT_SECRET"].presence
   end
 
   def render_unauthorized

@@ -43,6 +43,30 @@ paths:
         schema:
           type: string
       responses:
+        '401':
+          description: returns unauthorized when token is invalid
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: object
+                    nullable: true
+                  error:
+                    type: object
+                    properties:
+                      code:
+                        type: string
+                        example: UNAUTHORIZED
+                      message:
+                        type: string
+                      details:
+                        type: array
+                        items:
+                          type: string
         '200':
           description: returns empty when filter has no match
           content:
@@ -96,7 +120,8 @@ paths:
                   message:
                     type: string
         '422':
-          description: returns error when cnpj is invalid
+          description: returns validation error(s) for invalid or missing contact
+            fields (e.g. cpf/cnpj, phone, email)
           content:
             application/json:
               schema:
@@ -105,7 +130,7 @@ paths:
                   success:
                     type: boolean
                   data:
-                    type: string
+                    type: object
                     nullable: true
                   error:
                     type: object
@@ -185,7 +210,7 @@ paths:
                   success:
                     type: boolean
                   data:
-                    type: string
+                    type: object
                     nullable: true
                   error:
                     type: object
@@ -227,7 +252,7 @@ paths:
                   success:
                     type: boolean
                   data:
-                    type: string
+                    type: object
                     nullable: true
                   error:
                     type: object
@@ -274,7 +299,7 @@ paths:
                   success:
                     type: boolean
                   data:
-                    type: string
+                    type: object
                     nullable: true
                   message:
                     type: string
@@ -292,6 +317,9 @@ paths:
               schema:
                 type: object
                 properties:
+                  success:
+                    type: boolean
+                    example: true
                   data:
                     type: object
                     properties:
@@ -310,6 +338,11 @@ paths:
                             type: string
                           trust_level:
                             type: string
+                  token:
+                    type: string
+                    description: JWT Bearer token for subsequent authenticated requests
+                  message:
+                    type: string
         '403':
           description: insufficient trust level (bronze user)
           content:

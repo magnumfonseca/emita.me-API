@@ -22,14 +22,21 @@ module Auth
       render_failure("missing_code") if params[:code].blank?
     end
 
+    TOKEN_EXPIRY = 24.hours
+
     def render_success(user)
-      token = JWT.encode({ user_id: user.id }, ENV.fetch("JWT_SECRET"), "HS256")
+      token = JWT.encode(jwt_payload(user), ENV.fetch("JWT_SECRET"), "HS256")
       render json: {
         success: true,
         data: UserSerializer.new(user).serializable_hash[:data],
         token: token,
         message: "Authenticated successfully"
       }, status: :created
+    end
+
+    def jwt_payload(user)
+      now = Time.current.to_i
+      { user_id: user.id, iat: now, exp: now + TOKEN_EXPIRY.to_i }
     end
 
     def render_failure(error)

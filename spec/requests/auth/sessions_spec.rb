@@ -20,6 +20,7 @@ RSpec.describe 'Auth::Sessions', type: :request do
       response '201', 'successful login — prata or ouro user' do
         schema type: :object,
                properties: {
+                 success: { type: :boolean, example: true },
                  data: {
                    type: :object,
                    properties: {
@@ -35,7 +36,9 @@ RSpec.describe 'Auth::Sessions', type: :request do
                        }
                      }
                    }
-                 }
+                 },
+                 token:   { type: :string, description: 'JWT Bearer token for subsequent authenticated requests' },
+                 message: { type: :string }
                }
 
         let(:user) { create(:user) }

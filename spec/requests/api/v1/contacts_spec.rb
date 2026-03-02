@@ -4,7 +4,10 @@ require "swagger_helper"
 
 RSpec.describe "Api::V1::Contacts", type: :request do
   let(:user) { create(:user) }
-  let(:token) { JWT.encode({ user_id: user.id }, ENV.fetch("JWT_SECRET", "test_secret"), "HS256") }
+  let(:token) do
+    now = Time.current.to_i
+    JWT.encode({ user_id: user.id, iat: now, exp: now + 24.hours.to_i }, ENV.fetch("JWT_SECRET"), "HS256")
+  end
 
   path "/api/v1/contacts" do
     get "List contacts for the current user" do
@@ -18,6 +21,47 @@ RSpec.describe "Api::V1::Contacts", type: :request do
       parameter name: :name, in: :query, type: :string,  required: false, description: "Filter by name"
       parameter name: :cpf,  in: :query, type: :string,  required: false, description: "Filter by CPF"
       parameter name: :cnpj, in: :query, type: :string,  required: false, description: "Filter by CNPJ"
+
+      response "401", "returns unauthorized when Authorization header is missing" do
+        schema type: :object,
+               properties: {
+                 success: { type: :boolean },
+                 data:    { type: :object, nullable: true },
+                 error: {
+                   type: :object,
+                   properties: {
+                     code:    { type: :string, example: "UNAUTHORIZED" },
+                     message: { type: :string },
+                     details: { type: :array, items: { type: :string } }
+                   }
+                 }
+               }
+
+        let(:Authorization) { nil }
+
+        run_test! do |response|
+          parsed = JSON.parse(response.body)
+          expect(parsed["success"]).to be false
+          expect(parsed["error"]["code"]).to eq("UNAUTHORIZED")
+        end
+      end
+
+      response "401", "returns unauthorized when token is invalid" do
+        schema type: :object,
+               properties: {
+                 success: { type: :boolean },
+                 data:    { type: :object, nullable: true },
+                 error:   { type: :object }
+               }
+
+        let(:Authorization) { "Bearer invalid.token.here" }
+
+        run_test! do |response|
+          parsed = JSON.parse(response.body)
+          expect(parsed["success"]).to be false
+          expect(parsed["error"]["code"]).to eq("UNAUTHORIZED")
+        end
+      end
 
       response "200", "returns contacts for page 1" do
         schema type: :object,
@@ -248,7 +292,7 @@ RSpec.describe "Api::V1::Contacts", type: :request do
         schema type: :object,
                properties: {
                  success: { type: :boolean },
-                 data:    { type: :string, nullable: true },
+                 data:    { type: :object, nullable: true },
                  error: {
                    type: :object,
                    properties: {
@@ -273,7 +317,7 @@ RSpec.describe "Api::V1::Contacts", type: :request do
         schema type: :object,
                properties: {
                  success: { type: :boolean },
-                 data:    { type: :string, nullable: true },
+                 data:    { type: :object, nullable: true },
                  error:   { type: :object }
                }
 
@@ -291,7 +335,7 @@ RSpec.describe "Api::V1::Contacts", type: :request do
         schema type: :object,
                properties: {
                  success: { type: :boolean },
-                 data:    { type: :string, nullable: true },
+                 data:    { type: :object, nullable: true },
                  error:   { type: :object }
                }
 
@@ -309,7 +353,7 @@ RSpec.describe "Api::V1::Contacts", type: :request do
         schema type: :object,
                properties: {
                  success: { type: :boolean },
-                 data:    { type: :string, nullable: true },
+                 data:    { type: :object, nullable: true },
                  error:   { type: :object }
                }
 
@@ -323,11 +367,11 @@ RSpec.describe "Api::V1::Contacts", type: :request do
         end
       end
 
-      response "422", "returns error when cnpj is invalid" do
+      response "422", "returns validation error(s) for invalid or missing contact fields (e.g. cpf/cnpj, phone, email)" do
         schema type: :object,
                properties: {
                  success: { type: :boolean },
-                 data:    { type: :string, nullable: true },
+                 data:    { type: :object, nullable: true },
                  error:   { type: :object }
                }
 
@@ -377,7 +421,7 @@ RSpec.describe "Api::V1::Contacts", type: :request do
         schema type: :object,
                properties: {
                  success: { type: :boolean },
-                 data:    { type: :string, nullable: true },
+                 data:    { type: :object, nullable: true },
                  error:   { type: :object }
                }
 
@@ -440,7 +484,7 @@ RSpec.describe "Api::V1::Contacts", type: :request do
         schema type: :object,
                properties: {
                  success: { type: :boolean },
-                 data:    { type: :string, nullable: true },
+                 data:    { type: :object, nullable: true },
                  error:   { type: :object }
                }
 
@@ -460,7 +504,7 @@ RSpec.describe "Api::V1::Contacts", type: :request do
         schema type: :object,
                properties: {
                  success: { type: :boolean },
-                 data:    { type: :string, nullable: true },
+                 data:    { type: :object, nullable: true },
                  error:   { type: :object }
                }
 
@@ -489,7 +533,7 @@ RSpec.describe "Api::V1::Contacts", type: :request do
         schema type: :object,
                properties: {
                  success: { type: :boolean },
-                 data:    { type: :string, nullable: true },
+                 data:    { type: :object, nullable: true },
                  message: { type: :string }
                }
 
@@ -507,7 +551,7 @@ RSpec.describe "Api::V1::Contacts", type: :request do
         schema type: :object,
                properties: {
                  success: { type: :boolean },
-                 data:    { type: :string, nullable: true },
+                 data:    { type: :object, nullable: true },
                  message: { type: :string }
                }
 
