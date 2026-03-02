@@ -9,7 +9,6 @@ class Contact < ApplicationRecord
 
   before_validation :normalize_fields
 
-  validates :user, presence: true
   validates :name, presence: true
   validates :cpf,     cpf:  true, allow_blank: true
   validates :cnpj,    cnpj: true, allow_blank: true
