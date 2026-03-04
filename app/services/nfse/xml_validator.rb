@@ -21,7 +21,8 @@ module Nfse
     end
 
     def schema_for(filename)
-      Nokogiri::XML::Schema(File.read(SCHEMAS_PATH.join(filename)))
+      schema_path = SCHEMAS_PATH.join(filename)
+      Nokogiri::XML::Schema(File.open(schema_path))
     end
   end
 end
