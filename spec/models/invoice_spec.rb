@@ -21,9 +21,19 @@ RSpec.describe Invoice, type: :model do
   # ── Enum ──────────────────────────────────────────────────────────────────────
   it { is_expected.to define_enum_for(:status).backed_by_column_of_type(:string).with_values(draft: "draft", pending: "pending", issued: "issued", error: "error") }
 
+  # ── Cross-tenant validation ───────────────────────────────────────────────────
+  context "when client belongs to a different user" do
+    subject(:invoice) { build(:invoice, user: user, client: build(:contact, user: create(:user))) }
+
+    it "is invalid" do
+      expect(invoice).not_to be_valid
+      expect(invoice.errors[:client]).to be_present
+    end
+  end
+
   # ── Default status ────────────────────────────────────────────────────────────
   context "when status is not set" do
-    subject(:invoice) { build(:invoice, user: user, client: contact) }
+    subject(:invoice) { Invoice.new }
 
     it "defaults to draft" do
       expect(invoice.status).to eq("draft")

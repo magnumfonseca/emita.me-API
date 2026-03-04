@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateInvoices < ActiveRecord::Migration[8.1]
   def change
     create_table :invoices, id: :uuid, default: -> { "gen_random_uuid()" } do |t|

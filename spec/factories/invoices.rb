@@ -3,10 +3,12 @@
 FactoryBot.define do
   factory :invoice do
     association :user
-    association :client, factory: :contact
 
     service_description { Faker::Lorem.sentence }
     amount_cents        { Faker::Number.between(from: 100, to: 100_000) }
-    status              { :draft }
+
+    after(:build) do |invoice|
+      invoice.client ||= build(:contact, user: invoice.user)
+    end
   end
 end
