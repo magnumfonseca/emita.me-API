@@ -17,10 +17,25 @@ module Nfse
 
     private
 
+    NFSE_NS = "http://www.sped.fazenda.gov.br/nfse"
+
     def attach_signature(doc, pkcs12)
-      digest    = compute_digest(doc.root)
-      sig_value = sign_digest(digest, pkcs12.key)
-      insert_signature(doc, digest, sig_value, pkcs12.certificate)
+      inf_dps   = fetch_inf_dps!(doc)
+      ref_id    = fetch_ref_id!(inf_dps)
+      digest    = compute_digest(inf_dps)
+      sig_info  = build_signed_info_node(ref_id, digest)
+      sig_value = sign_signed_info(sig_info, pkcs12.key)
+      doc.root.add_child(wrap_signature(sig_info, sig_value, pkcs12.certificate))
+    end
+
+    def fetch_inf_dps!(doc)
+      doc.at_xpath("//nfse:infDPS", "nfse" => NFSE_NS) ||
+        raise(Errors::ValidationError, "missing infDPS element in DPS XML")
+    end
+
+    def fetch_ref_id!(inf_dps)
+      inf_dps["Id"].presence ||
+        raise(Errors::ValidationError, "missing Id attribute on infDPS")
     end
 
     def load_certificate
@@ -32,33 +47,29 @@ module Nfse
       Base64.strict_encode64(OpenSSL::Digest::SHA256.digest(canon))
     end
 
-    def sign_digest(digest, key)
-      raw = Base64.strict_decode64(digest)
-      Base64.strict_encode64(key.sign(OpenSSL::Digest::SHA256.new, raw))
-    end
-
-    def insert_signature(doc, digest, sig_value, cert)
-      ref_id   = doc.root["Id"] || "DPS"
-      sig_node = build_signature_node(ref_id: ref_id, digest: digest, sig_value: sig_value, cert: cert)
-      doc.root.add_child(sig_node)
-    end
-
-    def build_signature_node(ref_id:, digest:, sig_value:, cert:)
+    def build_signed_info_node(ref_id, digest)
       Nokogiri::XML::Builder.new do |xml|
-        xml.Signature(xmlns: "http://www.w3.org/2000/09/xmldsig#") do
-          build_signed_info(xml, ref_id, digest)
-          xml.SignatureValue(sig_value)
-          build_key_info(xml, cert)
+        xml.SignedInfo(xmlns: "http://www.w3.org/2000/09/xmldsig#") do
+          xml.CanonicalizationMethod(Algorithm: "http://www.w3.org/2001/10/xml-exc-c14n#")
+          xml.SignatureMethod(Algorithm: "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256")
+          build_reference(xml, ref_id, digest)
         end
       end.doc.root
     end
 
-    def build_signed_info(xml, ref_id, digest)
-      xml.SignedInfo do
-        xml.CanonicalizationMethod(Algorithm: "http://www.w3.org/2001/10/xml-exc-c14n#")
-        xml.SignatureMethod(Algorithm: "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256")
-        build_reference(xml, ref_id, digest)
-      end
+    def sign_signed_info(sig_info_node, key)
+      canon = sig_info_node.canonicalize(Nokogiri::XML::XML_C14N_EXCLUSIVE_1_0)
+      Base64.strict_encode64(key.sign(OpenSSL::Digest::SHA256.new, canon))
+    end
+
+    def wrap_signature(sig_info, sig_value, cert)
+      Nokogiri::XML::Builder.new do |xml|
+        xml.Signature(xmlns: "http://www.w3.org/2000/09/xmldsig#") do
+          xml.parent << sig_info.dup
+          xml.SignatureValue sig_value
+          build_key_info(xml, cert)
+        end
+      end.doc.root
     end
 
     def build_reference(xml, ref_id, digest)

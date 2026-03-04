@@ -24,7 +24,7 @@ module Nfse
       payload  = build_payload(signed[:compressed], dps_xml)
       response = send_request(payload)
       process_response(response, signed[:xml])
-    rescue Errors::ValidationError, Errors::GatewayError, RuntimeError => e
+    rescue StandardError => e
       Result.failure(e.message)
     end
 
@@ -41,12 +41,18 @@ module Nfse
     end
 
     def build_payload(compressed_xml, raw_dps_xml)
-      doc = Nokogiri::XML(raw_dps_xml)
-      {
-        xml:                compressed_xml,
-        cnpj:               doc.at("Prestador CNPJ")&.text,
-        municipioPrestador: doc.at("Prestador CodigoMunicipio")&.text
-      }
+      doc  = parse_dps(raw_dps_xml)
+      cnpj = fetch_node!(doc, "//infDPS/prest/CNPJ")
+      cloc = fetch_node!(doc, "//infDPS/cLocEmi")
+      { xml: compressed_xml, cnpj: cnpj, municipioPrestador: cloc }
+    end
+
+    def parse_dps(xml_string)
+      Nokogiri::XML(xml_string).tap(&:remove_namespaces!)
+    end
+
+    def fetch_node!(doc, xpath)
+      doc.at_xpath(xpath)&.text || raise(Errors::ValidationError, "missing #{xpath} in DPS")
     end
 
     def send_request(payload)

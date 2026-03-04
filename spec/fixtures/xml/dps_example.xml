@@ -1,20 +1,28 @@
-<DPS xmlns="http://www.sped.fazenda.gov.br/nfse">
-  <Identificacao>
-    <NumeroDPS>2026000001</NumeroDPS>
-    <Serie>DPS</Serie>
-    <Tipo>DPS</Tipo>
-  </Identificacao>
-  <Prestador>
-    <CNPJ>12345678000199</CNPJ>
-    <CodigoMunicipio>3550308</CodigoMunicipio>
-  </Prestador>
-  <Tomador>
-    <CPF>98765432100</CPF>
-    <Nome>João da Silva</Nome>
-  </Tomador>
-  <Servico>
-    <CodigoServico>010101</CodigoServico>
-    <Discriminacao>Consultoria</Discriminacao>
-    <ValorServicos>200.00</ValorServicos>
-  </Servico>
+<?xml version="1.0" encoding="UTF-8"?>
+<DPS xmlns="http://www.sped.fazenda.gov.br/nfse" Id="DPS">
+  <infDPS Id="DPS1">
+    <tpAmb>2</tpAmb>
+    <dhEmi>2026-03-04T12:00:00-03:00</dhEmi>
+    <verAplic>1.00</verAplic>
+    <dCompet>20260304</dCompet>
+    <tpEmit>1</tpEmit>
+    <cLocEmi>3550308</cLocEmi>
+    <prest>
+      <CNPJ>12345678000199</CNPJ>
+    </prest>
+    <serv>
+      <locPrest>
+        <cLocPrestacao>3550308</cLocPrestacao>
+      </locPrest>
+      <cServ>
+        <cTribNac>010101</cTribNac>
+        <xDescServ>Consultoria</xDescServ>
+      </cServ>
+      <valores>
+        <vServPrest>
+          <vServ>200.00</vServ>
+        </vServPrest>
+      </valores>
+    </serv>
+  </infDPS>
 </DPS>
