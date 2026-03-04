@@ -71,6 +71,10 @@ jobs:
       RAILS_ENV: test
       DATABASE_URL: postgres://postgres:postgres@localhost/emita_me_test
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      NFSE_SCHEMAS_PATH: ${{ vars.NFSE_SCHEMAS_PATH }}
+      NFSE_CERT_PATH: ${{ vars.NFSE_CERT_PATH }}
+      NFSE_CERT_PASSWORD: ${{ vars.NFSE_CERT_PASSWORD }}
+      NFSE_API_URL: ${{ vars.NFSE_API_URL }}
 
     steps:
       - name: Checkout code
