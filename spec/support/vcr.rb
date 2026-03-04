@@ -15,6 +15,7 @@ VCR.configure do |config|
 
   # Filter sensitive data
   config.filter_sensitive_data("<GITHUB_TOKEN>") { ENV.fetch("GITHUB_TOKEN", nil) }
+
   config.filter_sensitive_data("<BEARER_TOKEN>") do |interaction|
     interaction.request.headers["Authorization"]&.first&.sub(/^Bearer /, "")
   end

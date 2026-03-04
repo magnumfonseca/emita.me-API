@@ -1,0 +1,20 @@
+<DPS xmlns="http://www.sped.fazenda.gov.br/nfse">
+  <Identificacao>
+    <NumeroDPS>2026000001</NumeroDPS>
+    <Serie>DPS</Serie>
+    <Tipo>DPS</Tipo>
+  </Identificacao>
+  <Prestador>
+    <CNPJ>12345678000199</CNPJ>
+    <CodigoMunicipio>3550308</CodigoMunicipio>
+  </Prestador>
+  <Tomador>
+    <CPF>98765432100</CPF>
+    <Nome>João da Silva</Nome>
+  </Tomador>
+  <Servico>
+    <CodigoServico>010101</CodigoServico>
+    <Discriminacao>Consultoria</Discriminacao>
+    <ValorServicos>200.00</ValorServicos>
+  </Servico>
+</DPS>

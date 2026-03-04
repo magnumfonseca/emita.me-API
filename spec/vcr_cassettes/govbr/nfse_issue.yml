@@ -1,0 +1,23 @@
+http_interactions:
+- request:
+    method: post
+    uri: https://api.nfse.gov.br/nfse
+    body:
+      encoding: UTF-8
+      string: '{"xml":"FAKE_BASE64_XML","cnpj":"12345678000199","municipioPrestador":"3550308"}'
+    headers:
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+    body:
+      encoding: UTF-8
+      string: >
+        {"chaveAcesso":"NFS-e-3550308-2026-00000000000000000000000000000000000000000000","xml":"H4sIAAAAAAAAE6tWKkktLlGyUjA0MjQwMFeK1UvOz1NIy8xNVbJSSkos"}
+  recorded_at: Wed, 04 Mar 2026 12:00:00 GMT
+recorded_with: VCR 6.2.0
