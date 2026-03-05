@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_05_135140) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_05_201727) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -33,7 +33,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_05_135140) do
     t.datetime "created_at", null: false
     t.string "municipio_codigo"
     t.string "nome_fantasia"
-    t.text "perfis", default: [], array: true
+    t.text "perfis", default: [], null: false, array: true
     t.string "razao_social", null: false
     t.string "uf"
     t.datetime "updated_at", null: false
@@ -75,6 +75,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_05_135140) do
     t.string "cpf", null: false
     t.datetime "created_at", null: false
     t.string "email"
+    t.string "gov_br_access_token"
     t.string "name"
     t.string "trust_level", null: false
     t.datetime "updated_at", null: false

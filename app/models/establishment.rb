@@ -11,6 +11,6 @@ class Establishment < ApplicationRecord
   private
 
   def set_authorized
-    self.authorized = perfis.include?("EMISSOR")
+    self.authorized = Array(perfis).include?("EMISSOR")
   end
 end

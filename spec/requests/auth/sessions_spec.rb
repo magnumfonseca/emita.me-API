@@ -47,7 +47,7 @@ RSpec.describe 'Auth::Sessions', type: :request do
         before do
           allow_any_instance_of(Auth::SignInService)
             .to receive(:call)
-            .and_return(Result.success({ user: user, access_token: "fake_access_token" }))
+            .and_return(Result.success(user))
         end
 
         run_test! do |_response|

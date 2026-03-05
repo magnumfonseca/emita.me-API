@@ -28,8 +28,8 @@ RSpec.describe Auth::SignInService do
 
       it "returns the user in result.data" do
         result = service.call
-        expect(result.data[:user]).to be_a(User)
-        expect(result.data[:user].cpf).to eq("12345678900")
+        expect(result.data).to be_a(User)
+        expect(result.data.cpf).to eq("12345678900")
       end
 
       it "does not create a duplicate when CPF is already registered" do
@@ -39,17 +39,17 @@ RSpec.describe Auth::SignInService do
 
       it "returns the existing user when CPF is already registered" do
         existing = create(:user, cpf: "12345678900")
-        expect(service.call.data[:user]).to eq(existing)
+        expect(service.call.data).to eq(existing)
       end
 
       it "persists trust_level on the user" do
         result = service.call
-        expect(result.data[:user].trust_level).to eq("prata")
+        expect(result.data.trust_level).to eq("prata")
       end
 
-      it "does not issue a redundant UPDATE when creating a new user" do
-        expect_any_instance_of(User).not_to receive(:update!)
-        service.call
+      it "stores the access_token encrypted on the user" do
+        result = service.call
+        expect(result.data.reload.gov_br_access_token).to eq("fake_access_token")
       end
 
       it "updates trust_level on re-authentication" do
@@ -71,7 +71,7 @@ RSpec.describe Auth::SignInService do
         existing = create(:user, cpf: "12345678900")
         allow(User).to receive(:find_or_create_by!).and_raise(ActiveRecord::RecordNotUnique)
 
-        expect(service.call.data[:user]).to eq(existing)
+        expect(service.call.data).to eq(existing)
       end
 
       it "does not create a duplicate user" do

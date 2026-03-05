@@ -22,20 +22,20 @@ module Auth
       render_failure("missing_code") if params[:code].blank?
     end
 
-    def render_success(data)
-      enqueue_establishments_fetch(data)
-      render json: success_payload(data), status: :created
+    def render_success(user)
+      enqueue_establishments_fetch(user)
+      render json: success_payload(user), status: :created
     end
 
-    def enqueue_establishments_fetch(data)
-      FetchEstablishmentsJob.perform_later(data[:user].id, data[:access_token])
+    def enqueue_establishments_fetch(user)
+      FetchEstablishmentsJob.perform_later(user.id)
     end
 
-    def success_payload(data)
+    def success_payload(user)
       {
         success: true,
-        data: UserSerializer.new(data[:user]).serializable_hash[:data],
-        token: JwtEncoder.encode(data[:user].id),
+        data: UserSerializer.new(user).serializable_hash[:data],
+        token: JwtEncoder.encode(user.id),
         message: "Authenticated successfully"
       }
     end

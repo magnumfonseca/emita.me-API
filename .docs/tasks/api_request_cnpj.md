@@ -1,4 +1,4 @@
-# Implement Post‑Gov.br CNPJ Discovery via NFS‑e Nacional API (Rails 8)**
+# Implement Post‑Gov.br CNPJ Discovery via NFS‑e Nacional API (Rails 8)
 
 ## **Objective**
 After the user authenticates via Gov.br OAuth2, your system must:
@@ -229,4 +229,4 @@ After Gov.br login, your system receives:
 - `govbr_user_id`
 - `govbr_access_token`
 
-The new service must be called through a async job (sidekiq) after authentication:
+The new service must be called via an async job (Rails Active Job with Solid Queue) after authentication:  
