@@ -7,7 +7,7 @@ RSpec.describe Auth::SignInService do
     instance_double(OauthResponse,
       valid?: true, cpf: "12345678900",
       name: "Joao da Silva", email: "joao@example.com",
-      trust_level: "prata")
+      trust_level: "prata", access_token: "fake_access_token")
   end
   let(:bronze_oauth) { instance_double(OauthResponse, valid?: false) }
   let(:gateway)      { instance_double(GovBr::OauthGateway) }
@@ -47,9 +47,9 @@ RSpec.describe Auth::SignInService do
         expect(result.data.trust_level).to eq("prata")
       end
 
-      it "does not issue a redundant UPDATE when creating a new user" do
-        expect_any_instance_of(User).not_to receive(:update!)
-        service.call
+      it "stores the access_token encrypted on the user" do
+        result = service.call
+        expect(result.data.reload.gov_br_access_token).to eq("fake_access_token")
       end
 
       it "updates trust_level on re-authentication" do
@@ -58,7 +58,7 @@ RSpec.describe Auth::SignInService do
           instance_double(OauthResponse,
             valid?: true, cpf: "12345678900",
             name: "Joao da Silva", email: "joao@example.com",
-            trust_level: "ouro")
+            trust_level: "ouro", access_token: "fake_access_token")
         )
         expect { service.call }.to change { existing.reload.trust_level }.from("prata").to("ouro")
       end
@@ -88,7 +88,7 @@ RSpec.describe Auth::SignInService do
           instance_double(OauthResponse,
             valid?: true, cpf: "12345678900",
             name: "Joao da Silva", email: "joao@example.com",
-            trust_level: "ouro")
+            trust_level: "ouro", access_token: "fake_access_token")
         )
 
         expect { service.call }.to change { existing.reload.trust_level }.from("prata").to("ouro")

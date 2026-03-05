@@ -1,0 +1,27 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://adn.producaorestrita.nfse.gov.br/contribuintes/v1/estabelecimentos
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      Authorization:
+      - Bearer <BEARER_TOKEN>
+      Accept:
+      - application/json
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+    body:
+      encoding: UTF-8
+      string: '{"cpf":"12345678900","estabelecimentos":[]}'
+  recorded_at: Thu, 05 Mar 2026 00:00:00 GMT
+recorded_with: VCR 6.2.0

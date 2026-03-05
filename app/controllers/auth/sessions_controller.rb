@@ -23,12 +23,21 @@ module Auth
     end
 
     def render_success(user)
-      render json: {
+      enqueue_establishments_fetch(user)
+      render json: success_payload(user), status: :created
+    end
+
+    def enqueue_establishments_fetch(user)
+      FetchEstablishmentsJob.perform_later(user.id)
+    end
+
+    def success_payload(user)
+      {
         success: true,
         data: UserSerializer.new(user).serializable_hash[:data],
         token: JwtEncoder.encode(user.id),
         message: "Authenticated successfully"
-      }, status: :created
+      }
     end
 
     def render_failure(error_key)

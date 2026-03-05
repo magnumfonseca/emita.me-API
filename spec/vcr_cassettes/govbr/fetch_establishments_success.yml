@@ -1,0 +1,29 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://adn.producaorestrita.nfse.gov.br/contribuintes/v1/estabelecimentos
+    body:
+      encoding: UTF-8
+      string: ''
+    headers:
+      Authorization:
+      - Bearer <BEARER_TOKEN>
+      Accept:
+      - application/json
+      Content-Type:
+      - application/json
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json
+    body:
+      encoding: UTF-8
+      string: '{"cpf":"12345678900","estabelecimentos":[{"cnpj":"00394460005887","razaoSocial":"Empresa
+        Exemplo LTDA","nomeFantasia":"Exemplo","municipio":"3550308","uf":"SP","perfis":["EMISSOR","CONSULTA"]},{"cnpj":"11222333000181","razaoSocial":"Prestadora
+        Servicos ME","nomeFantasia":"Servicos ME","municipio":"3304557","uf":"RJ","perfis":["EMISSOR"]}]}'
+  recorded_at: Thu, 05 Mar 2026 00:00:00 GMT
+recorded_with: VCR 6.2.0

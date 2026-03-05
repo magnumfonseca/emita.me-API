@@ -12,6 +12,7 @@ module Auth
       return Result.failure("insufficient_trust_level") unless oauth_response.valid?
 
       user = find_or_create_user(oauth_response)
+      store_access_token(user, oauth_response.access_token)
       Result.success(user)
     rescue Errors::GatewayError
       Result.failure("gateway_error")
@@ -25,6 +26,10 @@ module Auth
       user = find_or_create_by_cpf(oauth_response)
       user.update!(trust_level: oauth_response.trust_level) unless user.previously_new_record?
       user
+    end
+
+    def store_access_token(user, token)
+      user.update!(gov_br_access_token: token)
     end
 
     def find_or_create_by_cpf(oauth_response)

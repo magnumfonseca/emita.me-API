@@ -3,8 +3,11 @@
 class OauthResponse
   VALID_TRUST_LEVELS = %w[prata ouro].freeze
 
-  def initialize(id_token:)
-    @payload = decode_payload(id_token)
+  attr_reader :access_token
+
+  def initialize(id_token:, access_token: nil)
+    @payload      = decode_payload(id_token)
+    @access_token = access_token
   end
 
   def cpf

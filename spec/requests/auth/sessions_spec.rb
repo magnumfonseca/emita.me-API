@@ -50,7 +50,9 @@ RSpec.describe 'Auth::Sessions', type: :request do
             .and_return(Result.success(user))
         end
 
-        run_test!
+        run_test! do |_response|
+          expect(enqueued_jobs.map { |j| j[:job] }).to include(FetchEstablishmentsJob)
+        end
       end
 
       response '403', 'insufficient trust level (bronze user)' do
