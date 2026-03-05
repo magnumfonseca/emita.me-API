@@ -12,7 +12,7 @@ module Auth
       return Result.failure("insufficient_trust_level") unless oauth_response.valid?
 
       user = find_or_create_user(oauth_response)
-      Result.success(user)
+      Result.success({ user: user, access_token: oauth_response.access_token })
     rescue Errors::GatewayError
       Result.failure("gateway_error")
     rescue Errors::InvalidToken

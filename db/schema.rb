@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_03_04_133539) do
+ActiveRecord::Schema[8.1].define(version: 2026_03_05_135140) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -25,6 +25,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_04_133539) do
     t.datetime "updated_at", null: false
     t.uuid "user_id", null: false
     t.index ["user_id"], name: "index_contacts_on_user_id"
+  end
+
+  create_table "establishments", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.boolean "authorized", default: false, null: false
+    t.string "cnpj", null: false
+    t.datetime "created_at", null: false
+    t.string "municipio_codigo"
+    t.string "nome_fantasia"
+    t.text "perfis", default: [], array: true
+    t.string "razao_social", null: false
+    t.string "uf"
+    t.datetime "updated_at", null: false
+    t.uuid "user_id", null: false
+    t.index ["user_id", "cnpj"], name: "index_establishments_on_user_id_and_cnpj", unique: true
+    t.index ["user_id"], name: "index_establishments_on_user_id"
   end
 
   create_table "invoices", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -67,6 +82,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_03_04_133539) do
   end
 
   add_foreign_key "contacts", "users"
+  add_foreign_key "establishments", "users"
   add_foreign_key "invoices", "contacts", column: "client_id"
   add_foreign_key "invoices", "users"
 end

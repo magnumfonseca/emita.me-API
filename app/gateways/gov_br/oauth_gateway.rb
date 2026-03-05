@@ -8,7 +8,10 @@ module GovBr
       response = HTTParty.post(TOKEN_URL, body: token_params(code))
       raise Errors::GatewayError if response.server_error?
 
-      OauthResponse.new(id_token: response.parsed_response["id_token"])
+      OauthResponse.new(
+        id_token:     response.parsed_response["id_token"],
+        access_token: response.parsed_response["access_token"]
+      )
     end
 
     private
