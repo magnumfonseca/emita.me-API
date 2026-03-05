@@ -36,6 +36,16 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 RSpec.configure do |config|
   config.include ActiveJob::TestHelper
+
+  config.before(:each) do
+    clear_enqueued_jobs
+    clear_performed_jobs
+  end
+
+  config.after(:each) do
+    clear_enqueued_jobs
+    clear_performed_jobs
+  end
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_paths = [
     Rails.root.join('spec/fixtures')
